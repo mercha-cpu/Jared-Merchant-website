@@ -356,61 +356,78 @@ fitting a simple model.</p>
 <h1>Data &amp; methods</h1>
 <p>We use the built-in <code>mpg</code> dataset from
 <strong>ggplot2</strong>.</p>
-<pre class="r"><code>library(ggplot2)
-summary(mpg)</code></pre>
-<pre><code>##  manufacturer          model               displ            year     
-##  Length:234         Length:234         Min.   :1.600   Min.   :1999  
-##  Class :character   Class :character   1st Qu.:2.400   1st Qu.:1999  
-##  Mode  :character   Mode  :character   Median :3.300   Median :2004  
-##                                        Mean   :3.472   Mean   :2004  
-##                                        3rd Qu.:4.600   3rd Qu.:2008  
-##                                        Max.   :7.000   Max.   :2008  
-##       cyl           trans               drv                 cty       
-##  Min.   :4.000   Length:234         Length:234         Min.   : 9.00  
-##  1st Qu.:4.000   Class :character   Class :character   1st Qu.:14.00  
-##  Median :6.000   Mode  :character   Mode  :character   Median :17.00  
-##  Mean   :5.889                                         Mean   :16.86  
-##  3rd Qu.:8.000                                         3rd Qu.:19.00  
-##  Max.   :8.000                                         Max.   :35.00  
-##       hwy             fl               class          
-##  Min.   :12.00   Length:234         Length:234        
-##  1st Qu.:18.00   Class :character   Class :character  
-##  Median :24.00   Mode  :character   Mode  :character  
-##  Mean   :23.44                                        
-##  3rd Qu.:27.00                                        
-##  Max.   :44.00</code></pre>
+<pre class="r"><code>options(repos = &quot;https://cran.rstudio.com/&quot;)
+install.packages(&quot;palmerpenguins&quot;)</code></pre>
+<pre><code>## package &#39;palmerpenguins&#39; successfully unpacked and MD5 sums checked
+## 
+## The downloaded binary packages are in
+##  C:\Users\jmerc\AppData\Local\Temp\RtmpyOVfnZ\downloaded_packages</code></pre>
+<pre class="r"><code>library(palmerpenguins)
+data &lt;- penguins
+str(data)</code></pre>
+<pre><code>## tibble [344 × 8] (S3: tbl_df/tbl/data.frame)
+##  $ species          : Factor w/ 3 levels &quot;Adelie&quot;,&quot;Chinstrap&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ island           : Factor w/ 3 levels &quot;Biscoe&quot;,&quot;Dream&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ bill_length_mm   : num [1:344] 39.1 39.5 40.3 NA 36.7 39.3 38.9 39.2 34.1 42 ...
+##  $ bill_depth_mm    : num [1:344] 18.7 17.4 18 NA 19.3 20.6 17.8 19.6 18.1 20.2 ...
+##  $ flipper_length_mm: int [1:344] 181 186 195 NA 193 190 181 195 193 190 ...
+##  $ body_mass_g      : int [1:344] 3750 3800 3250 NA 3450 3650 3625 4675 3475 4250 ...
+##  $ sex              : Factor w/ 2 levels &quot;female&quot;,&quot;male&quot;: 2 1 1 NA 1 2 1 2 NA NA ...
+##  $ year             : int [1:344] 2007 2007 2007 2007 2007 2007 2007 2007 2007 2007 ...</code></pre>
+<pre class="r"><code>summary(data)</code></pre>
+<pre><code>##       species          island    bill_length_mm  bill_depth_mm  
+##  Adelie   :152   Biscoe   :168   Min.   :32.10   Min.   :13.10  
+##  Chinstrap: 68   Dream    :124   1st Qu.:39.23   1st Qu.:15.60  
+##  Gentoo   :124   Torgersen: 52   Median :44.45   Median :17.30  
+##                                  Mean   :43.92   Mean   :17.15  
+##                                  3rd Qu.:48.50   3rd Qu.:18.70  
+##                                  Max.   :59.60   Max.   :21.50  
+##                                  NA&#39;s   :2       NA&#39;s   :2      
+##  flipper_length_mm  body_mass_g       sex           year     
+##  Min.   :172.0     Min.   :2700   female:165   Min.   :2007  
+##  1st Qu.:190.0     1st Qu.:3550   male  :168   1st Qu.:2007  
+##  Median :197.0     Median :4050   NA&#39;s  : 11   Median :2008  
+##  Mean   :200.9     Mean   :4202                Mean   :2008  
+##  3rd Qu.:213.0     3rd Qu.:4750                3rd Qu.:2009  
+##  Max.   :231.0     Max.   :6300                Max.   :2009  
+##  NA&#39;s   :2         NA&#39;s   :2</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
 </div>
 <div id="visualization" class="section level1">
 <h1>Visualization</h1>
-<pre class="r"><code>p &lt;- ggplot(mpg, aes(displ, hwy, color = class)) +
+<pre class="r"><code>p &lt;- ggplot(data, aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = &quot;loess&quot;, se = FALSE)
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  theme_minimal() +
+  labs(title = &quot;Penguin Body Mass vs. Flipper Length&quot;)
 p</code></pre>
 <p><img src="assignment-1_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 </div>
 <div id="small-analysis" class="section level1">
 <h1>Small analysis</h1>
-<pre class="r"><code>m &lt;- lm(hwy ~ displ + cyl, data = mpg)
+<pre class="r"><code>m &lt;- lm(body_mass_g ~ flipper_length_mm + species, data = data)
 summary(m)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = hwy ~ displ + cyl, data = mpg)
+## lm(formula = body_mass_g ~ flipper_length_mm + species, data = data)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -7.5098 -2.1953 -0.2049  1.9023 14.9223 
+## -927.70 -254.82  -23.92  241.16 1191.68 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  38.2162     1.0481  36.461  &lt; 2e-16 ***
-## displ        -1.9599     0.5194  -3.773 0.000205 ***
-## cyl          -1.3537     0.4164  -3.251 0.001323 ** 
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -4031.477    584.151  -6.901 2.55e-11 ***
+## flipper_length_mm    40.705      3.071  13.255  &lt; 2e-16 ***
+## speciesChinstrap   -206.510     57.731  -3.577 0.000398 ***
+## speciesGentoo       266.810     95.264   2.801 0.005392 ** 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 3.759 on 231 degrees of freedom
-## Multiple R-squared:  0.6049, Adjusted R-squared:  0.6014 
-## F-statistic: 176.8 on 2 and 231 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Residual standard error: 375.5 on 338 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.7826, Adjusted R-squared:  0.7807 
+## F-statistic: 405.7 on 3 and 338 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div id="reflection" class="section level1">
 <h1>Reflection</h1>
