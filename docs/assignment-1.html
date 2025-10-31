@@ -361,7 +361,7 @@ install.packages(&quot;palmerpenguins&quot;)</code></pre>
 <pre><code>## package &#39;palmerpenguins&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\jmerc\AppData\Local\Temp\Rtmp2pwJlB\downloaded_packages</code></pre>
+##  C:\Users\jmerc\AppData\Local\Temp\RtmpOK8rtX\downloaded_packages</code></pre>
 <pre class="r"><code>library(palmerpenguins)
 data &lt;- penguins
 str(data)</code></pre>
@@ -393,8 +393,8 @@ str(data)</code></pre>
 ##  NA&#39;s   :2         NA&#39;s   :2</code></pre>
 <pre class="r"><code>library(ggplot2)</code></pre>
 </div>
-<div id="visualization" class="section level1">
-<h1>Visualization</h1>
+<div id="visualizationgraph" class="section level1">
+<h1>Visualization/graph</h1>
 <pre class="r"><code>p &lt;- ggplot(data, aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE) +
@@ -402,6 +402,36 @@ str(data)</code></pre>
   labs(title = &quot;Penguin Body Mass vs. Flipper Length&quot;)
 p</code></pre>
 <p><img src="assignment-1_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>#Geovisulization
+library(ggplot2)
+world &lt;- map_data(&quot;world&quot;)
+palmer_long &lt;- -64.05
+palmer_lat  &lt;- -64.77
+
+ggplot(world, aes(x = long, y = lat, group = group)) +
+  # map background
+  geom_polygon(fill = &quot;bisque2&quot;, color = &quot;gray80&quot;, linewidth = 0.3) +
+  # Palmer Station point
+  geom_point(aes(x = palmer_long, y = palmer_lat), color = &quot;red&quot;, size = 5) +
+  # Palmer Station label (above and centered, smaller)
+  annotate(&quot;text&quot;, x = palmer_long, y = palmer_lat + 4,
+           label = &quot;Palmer Station&quot;, color = &quot;red&quot;, size = 4.2, fontface = &quot;bold&quot;, hjust = 0.5, vjust = 0) +
+  # North arrow (top right, fits well)
+  annotate(&quot;segment&quot;, x = -36, xend = -36, y = 15, yend = 25,
+           arrow = arrow(length = unit(0.5, &quot;cm&quot;)), color = &quot;black&quot;, size = 1.25) +
+  annotate(&quot;text&quot;, x = -36, y = 28, label = &quot;N&quot;, size = 6, fontface = &quot;bold&quot;) +
+  # Bigger margins
+  coord_fixed(xlim = c(-100, -20), ylim = c(-90, 40), clip = &quot;on&quot;) +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, face = &quot;bold&quot;, margin = margin(t = 20, b = 8)),
+    plot.subtitle = element_text(hjust = 0.5, size = 12, face = &quot;italic&quot;, color = &quot;gray25&quot;, margin = margin(b = 12))
+  ) +
+  labs(
+    title = &quot;Palmer Station, Antarctica: Home of the Penguin Dataset&quot;,
+    subtitle = &quot;Data: Palmer Penguins (palmerpenguins R package)   |   Map by: Jared Merchant&quot;
+  )</code></pre>
+<p><img src="assignment-1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="small-analysis" class="section level1">
 <h1>Small analysis</h1>
@@ -432,19 +462,15 @@ summary(m)</code></pre>
 <div id="reflection" class="section level1">
 <h1>Reflection</h1>
 <p>Write 3–5 sentences on what you learned and any caveats.</p>
-<p>In this analysis, I explored the Palmer Penguins data set, focusing
-on the relationship between flipper length and body mass across
-different penguin species. The summary statistics showed three species
-with varying body sizes and flipper lengths. The scatter plot and linear
-model both illustrated a strong positive association between flipper
-length and body mass, and the model revealed high statistical
-significance for both flipper length and species as predictors.
-Specifically, Gentoo penguins tend to be heavier, while Chinstrap
-penguins are lighter, after controlling for flipper length. A key caveat
-is the presence of some missing data and the assumption of linearity in
-the model. Overall, this exercise highlighted how physical measurements
-can help distinguish species and predict biological traits in wildlife
-data sets.</p>
+<p>In this analysis, I found a strong positive association between
+flipper length and body mass in three antarctic penguin species, with
+Gentoo penguins being consistently heavier. The map of Palmer station
+highlights the remote antarctic location where the data was collected.
+Underscoring the environmental context behind these biological patterns.
+While statistical modeling and visualizations helped clarify species
+differences, the results are specific to Palmer Station’s population and
+are limited by some missing values and the linearity assumption of the
+model.</p>
 </div>
 
 
